@@ -5,13 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Docker Practice Guide — Premium</title>
 <style>
-  /* ---------- RESET & BASE ---------- */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
     --bg-1: #0a0e1a;
-    --bg-2: #0f1629;
-    --bg-3: #141b30;
     --surface: rgba(255, 255, 255, 0.03);
     --surface-hover: rgba(255, 255, 255, 0.06);
     --border: rgba(255, 255, 255, 0.08);
@@ -20,42 +17,31 @@
     --text-2: #b8c1d1;
     --text-3: #8b949e;
     --accent-1: #2496ed;
-    --accent-2: #0db7ed;
     --accent-3: #58a6ff;
     --green: #3fb950;
     --yellow: #f0b429;
     --red: #f85149;
-    --purple: #a371f7;
     --gradient-1: linear-gradient(135deg, #2496ed 0%, #0db7ed 100%);
-    --gradient-2: linear-gradient(135deg, #a371f7 0%, #2496ed 100%);
-    --gradient-3: linear-gradient(135deg, #3fb950 0%, #0db7ed 100%);
-    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
-    --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.5);
-    --glow: 0 0 40px rgba(36, 150, 237, 0.3);
   }
 
   html { scroll-behavior: smooth; }
 
   body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
     background: var(--bg-1);
     color: var(--text-1);
     line-height: 1.6;
     min-height: 100vh;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Animated background blobs */
   body::before {
     content: '';
     position: fixed;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
     background:
       radial-gradient(circle at 20% 30%, rgba(36, 150, 237, 0.12) 0%, transparent 40%),
       radial-gradient(circle at 80% 70%, rgba(163, 113, 247, 0.10) 0%, transparent 45%),
@@ -71,17 +57,20 @@
     66% { transform: translate(3%, -2%) scale(0.98); }
   }
 
-  /* ---------- LAYOUT ---------- */
-  .container {
-    max-width: 1180px;
-    margin: 0 auto;
-    padding: 24px;
+  .progress-bar {
+    position: fixed; top: 0; left: 0;
+    height: 3px; background: var(--gradient-1);
+    width: 0%; z-index: 10000;
+    transition: width 0.1s;
+    box-shadow: 0 0 12px rgba(36, 150, 237, 0.8);
   }
+
+  .container { max-width: 1180px; margin: 0 auto; padding: 24px; }
 
   /* ---------- HERO ---------- */
   .hero {
     position: relative;
-    padding: 80px 40px;
+    padding: 70px 40px;
     margin-bottom: 32px;
     border-radius: 24px;
     background: linear-gradient(135deg, rgba(36, 150, 237, 0.15) 0%, rgba(163, 113, 247, 0.12) 100%);
@@ -89,28 +78,10 @@
     overflow: hidden;
     text-align: center;
     backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-  }
-
-  .hero::before {
-    content: '';
-    position: absolute;
-    top: -2px; left: -2px; right: -2px; bottom: -2px;
-    background: linear-gradient(135deg, #2496ed, #a371f7, #0db7ed, #2496ed);
-    background-size: 300% 300%;
-    border-radius: 24px;
-    z-index: -1;
-    animation: gradientBorder 8s ease infinite;
-    opacity: 0.6;
-  }
-
-  @keyframes gradientBorder {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
   }
 
   .hero-logo {
-    font-size: 4.5rem;
+    font-size: 4rem;
     margin-bottom: 16px;
     display: inline-block;
     animation: float 4s ease-in-out infinite;
@@ -123,7 +94,7 @@
   }
 
   .hero h1 {
-    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-size: clamp(2rem, 5vw, 3.2rem);
     font-weight: 800;
     letter-spacing: -0.02em;
     margin-bottom: 16px;
@@ -134,9 +105,9 @@
   }
 
   .hero p {
-    font-size: clamp(1rem, 1.8vw, 1.15rem);
+    font-size: clamp(1rem, 1.8vw, 1.1rem);
     color: var(--text-2);
-    max-width: 600px;
+    max-width: 620px;
     margin: 0 auto;
   }
 
@@ -150,13 +121,10 @@
     color: var(--accent-3);
     font-size: 0.85rem;
     font-weight: 500;
-    letter-spacing: 0.02em;
-    backdrop-filter: blur(10px);
   }
 
   .hero-badge::before {
-    content: '●';
-    color: var(--green);
+    content: '●'; color: var(--green);
     margin-right: 8px;
     animation: pulse 2s infinite;
   }
@@ -166,7 +134,7 @@
     50% { opacity: 0.4; }
   }
 
-  /* ---------- NAVIGATION ---------- */
+  /* ---------- NAV ---------- */
   .nav-wrapper {
     position: sticky;
     top: 16px;
@@ -175,7 +143,7 @@
   }
 
   nav {
-    background: rgba(15, 22, 41, 0.7);
+    background: rgba(15, 22, 41, 0.75);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--border);
@@ -200,7 +168,6 @@
     font-weight: 500;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     white-space: nowrap;
-    position: relative;
   }
 
   nav a:hover {
@@ -234,10 +201,6 @@
     font-size: 0.85rem;
     font-weight: 500;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    backdrop-filter: blur(10px);
   }
 
   .controls button:hover {
@@ -248,7 +211,49 @@
     box-shadow: 0 4px 16px rgba(36, 150, 237, 0.2);
   }
 
-  .controls button:active { transform: translateY(0); }
+  /* ---------- STATS ---------- */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
+    margin-bottom: 32px;
+  }
+
+  .stat-card {
+    background: rgba(15, 22, 41, 0.5);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px;
+    transition: all 0.3s;
+  }
+
+  .stat-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--border-hover);
+    box-shadow: 0 12px 40px rgba(36, 150, 237, 0.15);
+  }
+
+  .stat-icon { font-size: 1.5rem; margin-bottom: 8px; }
+
+  .stat-value {
+    font-size: 1.75rem;
+    font-weight: 800;
+    background: var(--gradient-1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+  }
+
+  .stat-label {
+    font-size: 0.78rem;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 500;
+    margin-top: 4px;
+  }
 
   /* ---------- SECTIONS ---------- */
   section {
@@ -260,14 +265,13 @@
     display: flex;
     align-items: center;
     gap: 14px;
-    margin-bottom: 24px;
-    padding-bottom: 16px;
+    margin-bottom: 20px;
+    padding-bottom: 14px;
     border-bottom: 1px solid var(--border);
   }
 
   .section-icon {
-    width: 48px;
-    height: 48px;
+    width: 48px; height: 48px;
     border-radius: 12px;
     display: flex;
     align-items: center;
@@ -279,13 +283,12 @@
   }
 
   .section-header h2 {
-    font-size: clamp(1.3rem, 2.5vw, 1.75rem);
+    font-size: clamp(1.3rem, 2.5vw, 1.6rem);
     font-weight: 700;
     letter-spacing: -0.01em;
-    color: var(--text-1);
   }
 
-  .section-header .count {
+  .count {
     margin-left: auto;
     font-size: 0.78rem;
     color: var(--text-3);
@@ -297,19 +300,10 @@
     white-space: nowrap;
   }
 
-  h3 {
-    color: var(--accent-3);
-    margin: 24px 0 12px;
-    font-size: 1.05rem;
-    font-weight: 600;
-    letter-spacing: 0.01em;
-  }
-
   /* ---------- COMMAND CARD ---------- */
   .cmd-block {
     background: rgba(15, 22, 41, 0.5);
     backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
     border: 1px solid var(--border);
     border-radius: 14px;
     margin: 10px 0;
@@ -321,9 +315,7 @@
   .cmd-block::before {
     content: '';
     position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
+    left: 0; top: 0; bottom: 0;
     width: 3px;
     background: var(--gradient-1);
     opacity: 0;
@@ -355,15 +347,10 @@
     gap: 12px;
   }
 
-  .cmd-terminal-dots {
-    display: flex;
-    gap: 5px;
-    flex-shrink: 0;
-  }
+  .cmd-terminal-dots { display: flex; gap: 5px; flex-shrink: 0; }
 
   .cmd-terminal-dots span {
-    width: 10px;
-    height: 10px;
+    width: 10px; height: 10px;
     border-radius: 50%;
     transition: transform 0.2s;
   }
@@ -376,7 +363,7 @@
 
   .cmd-text {
     flex: 1;
-    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+    font-family: 'JetBrains Mono', 'Consolas', monospace;
     font-size: 0.86rem;
     color: #7ee787;
     overflow-x: auto;
@@ -395,16 +382,10 @@
     margin-right: 4px;
   }
 
-  .cmd-actions {
-    display: flex;
-    gap: 8px;
-    flex-shrink: 0;
-    align-items: center;
-  }
+  .cmd-actions { display: flex; gap: 8px; flex-shrink: 0; align-items: center; }
 
   .icon-btn {
-    width: 32px;
-    height: 32px;
+    width: 32px; height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -432,9 +413,7 @@
     border-color: rgba(63, 185, 80, 0.5);
   }
 
-  .expand-btn {
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
+  .expand-btn { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
 
   .cmd-block.open .expand-btn {
     transform: rotate(180deg);
@@ -443,22 +422,17 @@
     border-color: transparent;
   }
 
-  /* ---------- DETAILS PANEL ---------- */
   .cmd-details {
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  .cmd-block.open .cmd-details {
-    max-height: 1000px;
-  }
+  .cmd-block.open .cmd-details { max-height: 1200px; }
 
   .cmd-details-inner {
-    padding: 0 20px 20px 20px;
+    padding: 18px 20px 20px;
     border-top: 1px solid var(--border);
-    margin-top: 2px;
-    padding-top: 18px;
     animation: fadeSlideIn 0.4s ease;
   }
 
@@ -475,8 +449,6 @@
     gap: 4px;
   }
 
-  .detail-row:last-child { margin-bottom: 0; }
-
   .detail-label {
     display: inline-flex;
     align-items: center;
@@ -490,18 +462,14 @@
 
   .detail-label::before {
     content: '';
-    width: 4px;
-    height: 4px;
+    width: 4px; height: 4px;
     border-radius: 50%;
     background: var(--accent-3);
   }
 
-  .detail-value {
-    color: var(--text-2);
-    line-height: 1.65;
-  }
+  .detail-value { color: var(--text-2); line-height: 1.65; }
 
-  .detail-value code {
+  .detail-value code, td code {
     background: rgba(36, 150, 237, 0.12);
     padding: 2px 7px;
     border-radius: 5px;
@@ -511,7 +479,7 @@
     border: 1px solid rgba(36, 150, 237, 0.2);
   }
 
-  /* ---------- CALLOUT BOXES ---------- */
+  /* ---------- CALLOUTS ---------- */
   .use-case, .warning-box, .tip-box, .info-box {
     border-radius: 10px;
     padding: 12px 16px;
@@ -522,8 +490,6 @@
     gap: 10px;
     align-items: flex-start;
     border-left: 3px solid;
-    position: relative;
-    overflow: hidden;
   }
 
   .use-case::before, .warning-box::before, .tip-box::before, .info-box::before {
@@ -565,14 +531,13 @@
     font-weight: 600;
   }
 
-  /* ---------- CODE BLOCKS (Dockerfile) ---------- */
+  /* ---------- CODE BLOCK ---------- */
   .code-block {
     background: #05080f;
     border: 1px solid var(--border);
     border-radius: 12px;
-    padding: 0;
     overflow: hidden;
-    margin: 10px 0;
+    margin: 12px 0;
   }
 
   .code-block-header {
@@ -589,7 +554,6 @@
     color: var(--text-3);
     font-family: 'JetBrains Mono', monospace;
     font-weight: 500;
-    letter-spacing: 0.02em;
   }
 
   .code-block pre {
@@ -605,11 +569,6 @@
 
   .code-block pre::-webkit-scrollbar { height: 6px; }
   .code-block pre::-webkit-scrollbar-thumb { background: var(--border); border-radius: 6px; }
-
-  .code-block .kw { color: #ff7b72; font-weight: 600; }
-  .code-block .str { color: #a5d6ff; }
-  .code-block .cmt { color: #8b949e; font-style: italic; }
-  .code-block .fn { color: #d2a8ff; }
 
   /* ---------- TABLE ---------- */
   .table-wrap {
@@ -647,80 +606,8 @@
   }
 
   tr:last-child td { border-bottom: none; }
-
-  tbody tr {
-    transition: background 0.2s;
-  }
-
+  tbody tr { transition: background 0.2s; }
   tbody tr:hover { background: rgba(36, 150, 237, 0.05); }
-
-  td code {
-    background: rgba(36, 150, 237, 0.12);
-    padding: 2px 7px;
-    border-radius: 5px;
-    font-family: 'JetBrains Mono', monospace;
-    color: #79c0ff;
-    font-size: 0.85em;
-    border: 1px solid rgba(36, 150, 237, 0.2);
-  }
-
-  /* ---------- STAT CARDS ---------- */
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 14px;
-    margin: 20px 0;
-  }
-
-  .stat-card {
-    background: rgba(15, 22, 41, 0.5);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 18px;
-    transition: all 0.3s;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .stat-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: var(--gradient-1);
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-
-  .stat-card:hover {
-    transform: translateY(-4px);
-    border-color: var(--border-hover);
-    box-shadow: 0 12px 40px rgba(36, 150, 237, 0.15);
-  }
-
-  .stat-card:hover::before { opacity: 1; }
-
-  .stat-icon { font-size: 1.5rem; margin-bottom: 8px; }
-
-  .stat-value {
-    font-size: 1.75rem;
-    font-weight: 800;
-    background: var(--gradient-1);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    line-height: 1.2;
-  }
-
-  .stat-label {
-    font-size: 0.78rem;
-    color: var(--text-3);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    font-weight: 500;
-    margin-top: 4px;
-  }
 
   /* ---------- TOAST ---------- */
   .toast {
@@ -743,14 +630,10 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 30px rgba(63, 185, 80, 0.2);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
   }
 
-  .toast.show {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   .toast::before { content: '✓'; color: var(--green); font-weight: bold; font-size: 1rem; }
 
   /* ---------- FOOTER ---------- */
@@ -763,8 +646,6 @@
     margin-top: 40px;
   }
 
-  footer .heart { color: var(--red); animation: pulse 1.5s infinite; display: inline-block; }
-
   /* ---------- RESPONSIVE ---------- */
   @media (max-width: 700px) {
     .container { padding: 16px; }
@@ -772,16 +653,13 @@
     .hero-logo { font-size: 3rem; }
     nav { padding: 8px; }
     nav a { padding: 8px 14px; font-size: 0.82rem; }
-    .section-header { gap: 10px; }
     .section-icon { width: 40px; height: 40px; font-size: 1.2rem; }
-    .section-header .count { display: none; }
-    .cmd-header { padding: 12px 14px; gap: 8px; }
+    .count { display: none; }
     .cmd-terminal-dots { display: none; }
     .cmd-text { font-size: 0.78rem; }
-    .detail-row { font-size: 0.85rem; }
+    .controls button { padding: 8px 12px; font-size: 0.78rem; }
   }
 
-  /* ---------- SCROLLBAR ---------- */
   ::-webkit-scrollbar { width: 10px; height: 10px; }
   ::-webkit-scrollbar-track { background: var(--bg-1); }
   ::-webkit-scrollbar-thumb {
@@ -791,21 +669,7 @@
   }
   ::-webkit-scrollbar-thumb:hover { background: rgba(36, 150, 237, 0.5); }
 
-  /* ---------- SELECTION ---------- */
   ::selection { background: rgba(36, 150, 237, 0.4); color: white; }
-
-  /* ---------- PROGRESS BAR (top) ---------- */
-  .progress-bar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 3px;
-    background: var(--gradient-1);
-    width: 0%;
-    z-index: 10000;
-    transition: width 0.1s;
-    box-shadow: 0 0 12px rgba(36, 150, 237, 0.8);
-  }
 </style>
 </head>
 <body>
@@ -814,15 +678,13 @@
 
 <div class="container">
 
-  <!-- ============ HERO ============ -->
   <div class="hero">
     <div class="hero-logo">🐳</div>
     <h1>Docker Practice Guide</h1>
-    <p>The complete interactive reference. Every command explained with real-world use cases — click any command to dive in.</p>
-    <div class="hero-badge">100+ commands · 9 categories · copy-to-clipboard</div>
+    <p>Complete interactive reference. Every command with explanation and real-world use case. Click any command to expand.</p>
+    <div class="hero-badge">100+ commands · 9 categories · 1-click copy</div>
   </div>
 
-  <!-- ============ NAV ============ -->
   <div class="nav-wrapper">
     <nav id="mainNav">
       <a href="#basic" class="active">⚙️ Basic</a>
@@ -837,35 +699,17 @@
     </nav>
   </div>
 
-  <!-- ============ CONTROLS ============ -->
   <div class="controls">
     <button onclick="toggleAll(true)">▼ Expand All</button>
     <button onclick="toggleAll(false)">▲ Collapse All</button>
     <button onclick="copyAllVisible()">📋 Copy All Visible</button>
   </div>
 
-  <!-- ============ STATS ============ -->
   <div class="stats-grid">
-    <div class="stat-card">
-      <div class="stat-icon">⚡</div>
-      <div class="stat-value" id="statCmds">0</div>
-      <div class="stat-label">Commands</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon">📁</div>
-      <div class="stat-value">9</div>
-      <div class="stat-label">Categories</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon">🎯</div>
-      <div class="stat-value">100%</div>
-      <div class="stat-label">Use Cases</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon">📋</div>
-      <div class="stat-value">1-click</div>
-      <div class="stat-label">Copy</div>
-    </div>
+    <div class="stat-card"><div class="stat-icon">⚡</div><div class="stat-value" id="statCmds">0</div><div class="stat-label">Commands</div></div>
+    <div class="stat-card"><div class="stat-icon">📁</div><div class="stat-value">9</div><div class="stat-label">Categories</div></div>
+    <div class="stat-card"><div class="stat-icon">🎯</div><div class="stat-value">100%</div><div class="stat-label">Use Cases</div></div>
+    <div class="stat-card"><div class="stat-icon">📋</div><div class="stat-value">1-click</div><div class="stat-label">Copy</div></div>
   </div>
 
   <!-- ============ BASIC ============ -->
@@ -877,44 +721,1201 @@
     </div>
 
     <div class="cmd-block" data-cmd="docker --version">
-      <div class="cmd-header">
-        <div class="cmd-terminal-dots"><span></span><span></span><span></span></div>
-        <span class="cmd-text">docker --version</span>
-        <div class="cmd-actions">
-          <button class="icon-btn copy-btn" title="Copy">📋</button>
-          <button class="icon-btn expand-btn" title="Expand">▾</button>
-        </div>
-      </div>
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker --version</span><div class="cmd-actions"><button class="icon-btn copy-btn" title="Copy">📋</button><button class="icon-btn expand-btn" title="Expand">▾</button></div></div>
       <div class="cmd-details"><div class="cmd-details-inner">
-        <div class="detail-row">
-          <span class="detail-label">What it does</span>
-          <span class="detail-value">Prints the installed Docker CLI version.</span>
-        </div>
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Prints the installed Docker CLI version.</span></div>
         <div class="use-case"><strong>Use case:</strong> Before deploying or during interviews — confirm Docker is installed and which version you're on. Docker 1.13 = ancient (2017).</div>
       </div></div>
     </div>
 
     <div class="cmd-block" data-cmd="docker info">
-      <div class="cmd-header">
-        <div class="cmd-terminal-dots"><span></span><span></span><span></span></div>
-        <span class="cmd-text">docker info</span>
-        <div class="cmd-actions">
-          <button class="icon-btn copy-btn" title="Copy">📋</button>
-          <button class="icon-btn expand-btn" title="Expand">▾</button>
-        </div>
-      </div>
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker info</span><div class="cmd-actions"><button class="icon-btn copy-btn" title="Copy">📋</button><button class="icon-btn expand-btn" title="Expand">▾</button></div></div>
       <div class="cmd-details"><div class="cmd-details-inner">
-        <div class="detail-row">
-          <span class="detail-label">What it does</span>
-          <span class="detail-value">Shows daemon-wide details: storage driver, kernel, runtime, container/image counts, memory.</span>
-        </div>
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Shows daemon-wide details: storage driver, kernel, runtime, container/image counts, memory.</span></div>
         <div class="use-case"><strong>Use case:</strong> First command on any unfamiliar server. Reveals why containers misbehave — wrong storage driver, cgroup version, or resource limits.</div>
       </div></div>
     </div>
 
     <div class="cmd-block" data-cmd="docker version">
-      <div class="cmd-header">
-        <div class="cmd-terminal-dots"><span></span><span></span><span></span></div>
-        <span class="cmd-text">docker version</span>
-        <div class="cmd-actions">
-          <button class="icon-btn copy-btn" title="Copy">📋
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker version</span><div class="cmd-actions"><button class="icon-btn copy-btn" title="Copy">📋</button><button class="icon-btn expand-btn" title="Expand">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Shows both client AND server (daemon) versions separately.</span></div>
+        <div class="use-case"><strong>Use case:</strong> When cryptic errors appear, check for client/daemon mismatch — e.g., client 24.x talking to daemon 19.x causes compatibility issues.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker help">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker help</span><div class="cmd-actions"><button class="icon-btn copy-btn" title="Copy">📋</button><button class="icon-btn expand-btn" title="Expand">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Lists all top-level Docker commands and options.</span></div>
+        <div class="use-case"><strong>Use case:</strong> When you forget a flag — <code>docker run --help</code> is faster than Googling and matches your exact version.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker login">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker login</span><div class="cmd-actions"><button class="icon-btn copy-btn" title="Copy">📋</button><button class="icon-btn expand-btn" title="Expand">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Authenticates to Docker Hub or another registry.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Before pushing to a private registry (Docker Hub, ECR, GCR, ACR). Without login, <code>docker push</code> fails with 401.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker logout">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker logout</span><div class="cmd-actions"><button class="icon-btn copy-btn" title="Copy">📋</button><button class="icon-btn expand-btn" title="Expand">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Removes stored registry credentials.</span></div>
+        <div class="use-case"><strong>Use case:</strong> On shared CI/CD machines or a coworker's laptop after finishing. Prevents credential leakage.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker system info">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker system info</span><div class="cmd-actions"><button class="icon-btn copy-btn" title="Copy">📋</button><button class="icon-btn expand-btn" title="Expand">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Alias for <code>docker info</code> — same output.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Useful when scripting with the <code>docker system</code> namespace.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker system df">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker system df</span><div class="cmd-actions"><button class="icon-btn copy-btn" title="Copy">📋</button><button class="icon-btn expand-btn" title="Expand">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Shows disk usage broken down by images, containers, volumes, build cache.</span></div>
+        <div class="use-case"><strong>Use case:</strong> "Why is my disk full?" A single build session can leave 10+ GB of cache. The <code>du</code> command of Docker.</div>
+        <div class="tip-box"><strong>Tip:</strong> Add <code>-v</code> for per-item breakdown — see exactly which image is hogging space.</div>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ============ IMAGES ============ -->
+  <section id="images">
+    <div class="section-header"><div class="section-icon">🖼️</div><h2>Image Commands</h2><span class="count">16 commands</span></div>
+
+    <div class="cmd-block" data-cmd="docker pull nginx">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker pull nginx</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Downloads the <code>nginx</code> image (default tag: <code>latest</code>) from Docker Hub.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Preparing a fresh server. Pull ahead so <code>docker run</code> starts instantly.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker pull nginx:1.25-alpine">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker pull nginx:1.25-alpine</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Pulls pinned version + variant: nginx 1.25 on Alpine Linux (~5 MB base vs ~140 MB).</span></div>
+        <div class="use-case"><strong>Use case:</strong> Production deployments. Never use <code>:latest</code> in prod — silent updates break apps.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker images">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker images</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Lists local images with repository, tag, ID, created date, size.</span></div>
+        <div class="use-case"><strong>Use case:</strong> "Do I already have this image?" before running. Or check total disk usage.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker image ls -a">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker image ls -a</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Lists ALL images including intermediate layers used in multi-stage builds.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Inspect build artifacts. Multi-stage builds create intermediate images not shown by default.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd='docker image ls --filter "dangling=true"'>
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker image ls --filter "dangling=true"</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Finds untagged (<code>&lt;none&gt;:&lt;none&gt;</code>) images left behind after rebuilds.</span></div>
+        <div class="use-case"><strong>Use case:</strong> After many rebuilds, untagged images eat 20 GB. Common on CI/CD runners.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker build -t myapp:1.0 .">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker build -t myapp:1.0 .</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Builds an image from Dockerfile. <code>-t</code> names it; <code>.</code> = build context.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Every time you change your Dockerfile or code. Turns source into a runnable image.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker build -t myapp:1.0 -f Dockerfile.dev .">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker build -t myapp:1.0 -f Dockerfile.dev .</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Builds using a specific Dockerfile (<code>-f</code>) instead of the default.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Same project, different environments. <code>Dockerfile.dev</code> = hot reload + debug tools; <code>Dockerfile</code> = lean production image.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker build --no-cache -t myapp:1.0 .">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker build --no-cache -t myapp:1.0 .</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Rebuilds from scratch — ignores all cached layers.</span></div>
+        <div class="use-case"><strong>Use case:</strong> "It worked yesterday, now broken." Cached layers hide the real problem.</div>
+        <div class="warning-box"><strong>Warning:</strong> Much slower. Only use when debugging cache issues.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker build --build-arg ENV=prod -t myapp:1.0 .">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker build --build-arg ENV=prod -t myapp:1.0 .</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Passes a value into an <code>ARG</code> declared in the Dockerfile.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Same Dockerfile, different outputs — e.g., different API URLs for staging vs production.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker tag myapp:1.0 username/myapp:1.0">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker tag myapp:1.0 username/myapp:1.0</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Creates an alias pointing to the same image ID.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Before pushing. Registries require <code>namespace/repo:tag</code> format.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker push username/myapp:1.0">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker push username/myapp:1.0</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Uploads image layers to Docker Hub or your registry.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Sharing with teammates, CI/CD, or Kubernetes clusters.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker rmi myapp:1.0">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker rmi myapp:1.0</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Removes a local image (must not be used by a running container).</span></div>
+        <div class="use-case"><strong>Use case:</strong> Cleaning up after testing. Frees disk and prevents confusion.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker rmi -f myapp:1.0">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker rmi -f myapp:1.0</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Force-removes an image even if referenced by a stopped container.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Emergency cleanup when a container is stuck.</div>
+        <div class="warning-box"><strong>Warning:</strong> Can leave orphaned containers. Check <code>docker ps -a</code> after.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker image prune">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker image prune</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Removes dangling (untagged) images only.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Weekly maintenance on dev machines. Very safe.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker image prune -a">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker image prune -a</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Removes all images not used by a running container.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Reclaiming serious disk space on a build server.</div>
+        <div class="warning-box"><strong>Warning:</strong> Next <code>docker run</code> will re-pull images.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker inspect nginx">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker inspect nginx</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Returns full JSON: config, env, mounts, network, layers.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Before running an unfamiliar image, see its defaults — CMD, ENTRYPOINT, EXPOSE, WORKDIR. Most useful debugging command.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker history nginx">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker history nginx</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Shows each layer of the image and the command that created it.</span></div>
+        <div class="use-case"><strong>Use case:</strong> "Why is this image 2 GB?" Spot the <code>RUN apt-get install</code> pulling massive packages.</div>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ============ CONTAINERS ============ -->
+  <section id="containers">
+    <div class="section-header"><div class="section-icon">📦</div><h2>Container Commands</h2><span class="count">25+ commands</span></div>
+
+    <div class="cmd-block" data-cmd="docker run hello-world">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker run hello-world</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Pulls, creates, and runs a test container that exits after printing a message.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Verifying a fresh Docker install. If this works, Docker's full pipeline works.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker run -it ubuntu bash">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker run -it ubuntu bash</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value"><code>-i</code> = interactive (keep STDIN); <code>-t</code> = TTY. Opens bash inside a fresh Ubuntu.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Exploring an OS without installing a VM. Great for learning Linux.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker run -d --name web -p 8080:80 nginx">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker run -d --name web -p 8080:80 nginx</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value"><code>-d</code> = detached. <code>--name</code> = friendly name. <code>-p host:container</code> = port mapping.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Standard way to run any web service. Visit <code>localhost:8080</code> → nginx serves on container port 80.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker run -d --name db -e MYSQL_ROOT_PASSWORD=secret mysql:8">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker run -d --name db -e MYSQL_ROOT_PASSWORD=secret mysql:8</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value"><code>-e</code> sets environment variables inside the container.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Local development database. Spin up MySQL in 3 seconds instead of installing it.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker run -d --name app --restart always myapp:1.0">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker run -d --name app --restart always myapp:1.0</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value"><code>--restart always</code> = auto-restart on crash or host reboot.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Production single-container deployments. Essential for services that must stay up.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker run --rm -it alpine sh">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker run --rm -it alpine sh</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value"><code>--rm</code> = delete container automatically when it exits.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Quick debugging or one-off tasks. Test network, DNS, curl from inside a container.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker run -d -v $(pwd):/app myapp:1.0">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker run -d -v $(pwd):/app myapp:1.0</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value"><code>-v host:container</code> = bind mount. Edits on host appear inside container instantly.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Local dev with live reload. Standard for Node/Python workflows.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker ps">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker ps</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Lists running containers.</span></div>
+        <div class="use-case"><strong>Use case:</strong> "What's running right now?" First command on any server.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker ps -a">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker ps -a</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value"><code>-a</code> = all containers including stopped/crashed.</span></div>
+        <div class="use-case"><strong>Use case:</strong> "Why did my container stop?" The crashed one is invisible in plain <code>ps</code>.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker ps -q">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker ps -q</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value"><code>-q</code> = quiet — only container IDs.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Scripting. <code>docker stop $(docker ps -q)</code> stops everything.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd='docker ps --filter "status=exited"'>
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker ps --filter "status=exited"</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Filters by state: running, paused, exited, etc.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Finding crashed containers on a busy server — your incident backlog.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker start web">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker start web</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Starts a stopped container.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Bringing a stopped service back online after maintenance.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker stop web">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker stop web</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Graceful shutdown: SIGTERM → SIGKILL after 10s.</span></div>
+        <div class="use-case"><strong>Use case:</strong> During maintenance windows. Gives the app time to flush state.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker restart web">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker restart web</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Stops and starts a container.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Applying a config change (e.g., edited nginx.conf inside).</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker rm web">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker rm web</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Removes a stopped container.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Cleanup after testing. Must be stopped first.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker rm -f web">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker rm -f web</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Force stop + remove in one command.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Iterating fast: <code>docker rm -f web && docker run -d --name web ...</code></div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker exec -it web bash">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker exec -it web bash</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Runs a NEW command inside an EXISTING running container.</span></div>
+        <div class="use-case"><strong>Use case:</strong> "SSH into container." Debug app, check env vars, run curl from inside.</div>
+        <div class="tip-box"><strong>Tip:</strong> Key difference from <code>docker run</code>: exec doesn't create a new container.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker logs -f web">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker logs -f web</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value"><code>-f</code> = follow (like <code>tail -f</code>). Streams stdout/stderr.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Watching live during deployment. #1 debugging tool.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker logs --tail 50 web">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker logs --tail 50 web</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Last N lines only.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Logs are huge. Only recent output matters.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker logs --since 10m web">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker logs --since 10m web</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Logs from a specific time window.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Investigating an incident — "what happened in the 10 minutes before the crash?"</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker cp file.txt web:/tmp/">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker cp file.txt web:/tmp/</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Copies files between host ↔ container (both directions).</span></div>
+        <div class="use-case"><strong>Use case:</strong> Inject configs or extract logs without rebuilding.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker inspect web">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker inspect web</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Full JSON details about a container.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Deep debugging — check exit codes, mounts, network config.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker inspect -f '{{.State.Status}}' web">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker inspect -f '{{.State.Status}}' web</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Go template — extract a single field.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Health-check scripts in CI. Get just the status, not 500 lines of JSON.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker stats">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker stats</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Live CPU, memory, network, disk I/O per container.</span></div>
+        <div class="use-case"><strong>Use case:</strong> "Is my container using too much RAM?" Spot leaks during load tests.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker stats --no-stream">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker stats --no-stream</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">One snapshot instead of a live stream.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Scripted monitoring — pipe to a log collector.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker top web">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker top web</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Shows host-side processes running inside the container.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Verify no rogue processes or fork bombs.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker port web">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker port web</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Shows port mappings (e.g., <code>80/tcp -> 0.0.0.0:8080</code>).</span></div>
+        <div class="use-case"><strong>Use case:</strong> Forgot the mapping? Tell a teammate the URL.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker diff web">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker diff web</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Lists files changed vs the original image (A/C/D).</span></div>
+        <div class="use-case"><strong>Use case:</strong> "What did this container write?" Catches runaway logs or unexpected files.</div>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ============ VOLUMES ============ -->
+  <section id="volumes">
+    <div class="section-header"><div class="section-icon">💾</div><h2>Volume Commands</h2><span class="count">8 commands</span></div>
+
+    <div class="cmd-block" data-cmd="docker volume create mydata">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker volume create mydata</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Creates a named volume managed by Docker.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Persistent storage for databases. Pre-create so multiple containers can share it.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker volume ls">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker volume ls</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Lists all volumes.</span></div>
+        <div class="use-case"><strong>Use case:</strong> "Where did my data go?" After container deletion, named volumes remain.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker volume inspect mydata">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker volume inspect mydata</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Shows mount point, driver, labels.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Find where data lives on the host for backups.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker volume rm mydata">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker volume rm mydata</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Deletes a volume (must be unused).</span></div>
+        <div class="use-case"><strong>Use case:</strong> Final cleanup after a project ends.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker volume prune">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker volume prune</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Removes UNUSED volumes.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Reclaiming space after removing containers.</div>
+        <div class="warning-box"><strong>Warning:</strong> Data loss. Check <code>docker volume ls</code> first.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker run -d -v mydata:/var/lib/mysql mysql:8">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker run -d -v mydata:/var/lib/mysql mysql:8</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Mounts named volume into container path.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Running any database. Without this, data dies with the container.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker run -d -v $(pwd)/html:/usr/share/nginx/html nginx">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker run -d -v $(pwd)/html:/usr/share/nginx/html nginx</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Bind mount: host path → container path.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Serving a static site from your laptop. Edit HTML, refresh browser.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker run -d --mount source=mydata,target=/data nginx">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker run -d --mount source=mydata,target=/data nginx</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Modern explicit syntax for mounting.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Production deployments. Preferred over <code>-v</code> in Compose and Kubernetes manifests.</div>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ============ NETWORKS ============ -->
+  <section id="networks">
+    <div class="section-header"><div class="section-icon">🌐</div><h2>Network Commands</h2><span class="count">9 commands</span></div>
+
+    <div class="cmd-block" data-cmd="docker network ls">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker network ls</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Lists networks (default: bridge, host, none).</span></div>
+        <div class="use-case"><strong>Use case:</strong> Before connecting containers, see what's available.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker network create mynet">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker network create mynet</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Creates a user-defined bridge network.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Microservices setup. Containers on the same network resolve each other by name (DNS).</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker network inspect mynet">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker network inspect mynet</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Shows connected containers, subnet, gateway.</span></div>
+        <div class="use-case"><strong>Use case:</strong> "Why can't container A reach container B?" Shows exactly who's connected.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker network connect mynet web">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker network connect mynet web</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Attaches a running container to a network.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Expanding an app without restarting containers.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker network disconnect mynet web">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker network disconnect mynet web</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Detaches a container from a network.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Isolating a container for security testing.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker network rm mynet">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker network rm mynet</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Deletes a network (must have no containers).</span></div>
+        <div class="use-case"><strong>Use case:</strong> Cleaning up after a project.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker network prune">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker network prune</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Removes unused networks.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Cleanup after Compose projects are down.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker run -d --network mynet --name api nginx">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker run -d --network mynet --name api nginx</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Runs container on a user-defined network.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Microservices — other containers reach this one at <code>http://api:80</code>.</div>
+        <div class="info-box"><strong>Why user-defined networks matter:</strong> Containers get <em>automatic DNS</em>. On the default bridge, you can only reach them by IP.</div>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ============ COMPOSE ============ -->
+  <section id="compose">
+    <div class="section-header"><div class="section-icon">🎼</div><h2>Docker Compose</h2><span class="count">14 commands</span></div>
+
+    <div class="cmd-block" data-cmd="docker compose up">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker compose up</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Creates and starts all services (foreground, you see logs).</span></div>
+        <div class="use-case"><strong>Use case:</strong> Starting a multi-service app for development while watching logs.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker compose up -d">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker compose up -d</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value"><code>-d</code> = detached (background).</span></div>
+        <div class="use-case"><strong>Use case:</strong> You want your terminal back for other work.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker compose up --build">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker compose up --build</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Rebuilds images before starting.</span></div>
+        <div class="use-case"><strong>Use case:</strong> After editing code or Dockerfile — rebuild + restart in one command.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker compose down">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker compose down</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Stops and removes containers + networks. Volumes stay.</span></div>
+        <div class="use-case"><strong>Use case:</strong> End of day cleanup. Data is safe.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker compose down -v">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker compose down -v</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Also removes volumes.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Reset to a clean slate — fresh database.</div>
+        <div class="warning-box"><strong>Warning:</strong> Database wiped. Only use when you mean it.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker compose ps">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker compose ps</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Lists compose project containers.</span></div>
+        <div class="use-case"><strong>Use case:</strong> "What services are up?" at a glance.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker compose logs -f">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker compose logs -f</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Follows logs of ALL services, prefixed by service name.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Watching all services at once during a bug hunt.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker compose logs web">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker compose logs web</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Logs for one service.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Focused debugging — cleaner output.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker compose exec web bash">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker compose exec web bash</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Shell into one service.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Debug a component while others keep running.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker compose restart web">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker compose restart web</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Restart one service.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Apply config changes without touching other services.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker compose stop">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker compose stop</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Stops all services without removing.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Pause a stack for lunch or RAM savings. Resume with <code>start</code>.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker compose start">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker compose start</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Restarts stopped services.</span></div>
+        <div class="use-case"><strong>Use case:</strong> After a <code>stop</code> — instant resume with preserved state.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker compose build">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker compose build</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Builds images only.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Pre-building in CI so <code>up</code> is fast.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker compose config">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker compose config</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Validates and prints the resolved YAML.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Catch syntax errors before running. See env-var substitution results.</div>
+      </div></div>
+    </div>
+
+    <h3>Sample docker-compose.yml</h3>
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="code-block-title">docker-compose.yml</span>
+        <button class="icon-btn copy-btn">📋</button>
+      </div>
+      <pre><span class="kw">version</span>: <span class="str">'3.8'</span>
+<span class="kw">services</span>:
+  <span class="fn">web</span>:
+    <span class="kw">build</span>: .
+    <span class="kw">ports</span>:
+      - <span class="str">"8080:80"</span>
+    <span class="kw">volumes</span>:
+      - <span class="str">./html:/usr/share/nginx/html</span>
+    <span class="kw">depends_on</span>:
+      - <span class="fn">db</span>
+  <span class="fn">db</span>:
+    <span class="kw">image</span>: <span class="str">mysql:8</span>
+    <span class="kw">environment</span>:
+      <span class="kw">MYSQL_ROOT_PASSWORD</span>: <span class="str">secret</span>
+    <span class="kw">volumes</span>:
+      - <span class="str">dbdata:/var/lib/mysql</span>
+<span class="kw">volumes</span>:
+  <span class="fn">dbdata</span>:</pre>
+    </div>
+  </section>
+
+  <!-- ============ DOCKERFILE ============ -->
+  <section id="dockerfile">
+    <div class="section-header"><div class="section-icon">📝</div><h2>Dockerfile</h2><span class="count">14 instructions</span></div>
+
+    <h3>Node.js App</h3>
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="code-block-title">Dockerfile (Node)</span>
+        <button class="icon-btn copy-btn">📋</button>
+      </div>
+      <pre><span class="kw">FROM</span> node:20-alpine
+<span class="kw">WORKDIR</span> /app
+<span class="kw">COPY</span> package*.json ./
+<span class="kw">RUN</span> npm install
+<span class="kw">COPY</span> . .
+<span class="kw">EXPOSE</span> 3000
+<span class="kw">CMD</span> [<span class="str">"node"</span>, <span class="str">"index.js"</span>]</pre>
+    </div>
+
+    <h3>Python App</h3>
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="code-block-title">Dockerfile (Python)</span>
+        <button class="icon-btn copy-btn">📋</button>
+      </div>
+      <pre><span class="kw">FROM</span> python:3.12-slim
+<span class="kw">WORKDIR</span> /app
+<span class="kw">COPY</span> requirements.txt .
+<span class="kw">RUN</span> pip install --no-cache-dir -r requirements.txt
+<span class="kw">COPY</span> . .
+<span class="kw">EXPOSE</span> 5000
+<span class="kw">CMD</span> [<span class="str">"python"</span>, <span class="str">"app.py"</span>]</pre>
+    </div>
+
+    <h3>Multi-Stage Build</h3>
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="code-block-title">Dockerfile (multi-stage)</span>
+        <button class="icon-btn copy-btn">📋</button>
+      </div>
+      <pre><span class="cmt"># Build stage</span>
+<span class="kw">FROM</span> node:20-alpine <span class="kw">AS</span> builder
+<span class="kw">WORKDIR</span> /app
+<span class="kw">COPY</span> . .
+<span class="kw">RUN</span> npm install && npm run build
+
+<span class="cmt"># Runtime stage</span>
+<span class="kw">FROM</span> nginx:alpine
+<span class="kw">COPY</span> --from=builder /app/dist /usr/share/nginx/html
+<span class="kw">EXPOSE</span> 80
+<span class="kw">CMD</span> [<span class="str">"nginx"</span>, <span class="str">"-g"</span>, <span class="str">"daemon off;"</span>]</pre>
+    </div>
+
+    <h3>Instruction Reference</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Instruction</th><th>Purpose</th><th>Use Case</th></tr></thead>
+        <tbody>
+          <tr><td><code>FROM</code></td><td>Base image</td><td>Choose your base: node:20-alpine for small Node apps</td></tr>
+          <tr><td><code>WORKDIR</code></td><td>Set working directory</td><td>Avoid messy absolute paths in COPY/RUN/CMD</td></tr>
+          <tr><td><code>COPY</code></td><td>Copy files from host</td><td>Copy package.json first, then source — for layer caching</td></tr>
+          <tr><td><code>ADD</code></td><td>Copy + extract URLs/tarballs</td><td>Rarely needed; prefer COPY unless extracting tar</td></tr>
+          <tr><td><code>RUN</code></td><td>Execute at build time</td><td>Install packages; combine with cache cleanup in one layer</td></tr>
+          <tr><td><code>CMD</code></td><td>Default runtime command</td><td>Default args — overridable by docker run arguments</td></tr>
+          <tr><td><code>ENTRYPOINT</code></td><td>Fixed executable</td><td>Pair with CMD for CLI tools where args vary</td></tr>
+          <tr><td><code>EXPOSE</code></td><td>Document port</td><td>Compose and inspect use this to auto-map ports</td></tr>
+          <tr><td><code>ENV</code></td><td>Environment variable</td><td>Set defaults like NODE_ENV=production</td></tr>
+          <tr><td><code>ARG</code></td><td>Build-time variable</td><td>Pass with --build-arg for different build variants</td></tr>
+          <tr><td><code>VOLUME</code></td><td>Mount point</td><td>For images that always need persistence</td></tr>
+          <tr><td><code>USER</code></td><td>Run as user</td><td>Security — run as non-root to limit exploit damage</td></tr>
+          <tr><td><code>LABEL</code></td><td>Metadata</td><td>Track maintainer, version, description</td></tr>
+          <tr><td><code>HEALTHCHECK</code></td><td>Container health test</td><td>Enables auto-restart on unhealthy state</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ CLEANUP ============ -->
+  <section id="cleanup">
+    <div class="section-header"><div class="section-icon">🧹</div><h2>Cleanup Commands</h2><span class="count">11 commands</span></div>
+
+    <div class="cmd-block" data-cmd="docker container prune">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker container prune</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it removes</span><span class="detail-value">All <strong>stopped</strong> containers.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Daily CI runner cleanup. Stopped containers pile up; this clears them safely.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker image prune">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker image prune</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it removes</span><span class="detail-value">Dangling (untagged) images only.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Weekly dev maintenance — very safe.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker image prune -a">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker image prune -a</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it removes</span><span class="detail-value">All images not used by a container.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Reclaiming disk space fast.</div>
+        <div class="warning-box"><strong>Warning:</strong> Next <code>docker run</code> re-pulls images.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker volume prune">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker volume prune</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it removes</span><span class="detail-value">Volumes not used by any container.</span></div>
+        <div class="use-case"><strong>Use case:</strong> After removing a database container.</div>
+        <div class="warning-box"><strong>Warning:</strong> Data loss. Check <code>docker volume ls</code> first.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker network prune">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker network prune</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it removes</span><span class="detail-value">Unused networks.</span></div>
+        <div class="use-case"><strong>Use case:</strong> After Compose projects are down. Removes orphaned networks.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker system prune">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker system prune</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it removes</span><span class="detail-value">Stopped containers + dangling images + unused networks + build cache.</span></div>
+        <div class="use-case"><strong>Use case:</strong> The safe default cleanup. Weekly habit.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker system prune -a">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker system prune -a</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it removes</span><span class="detail-value">Everything unused — including all images not in use.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Aggressive cleanup when disk is critical.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker system prune -a --volumes">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker system prune -a --volumes</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it removes</span><span class="detail-value">Nuclear option — everything including volumes.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Before decommissioning a machine or a full factory reset.</div>
+        <div class="warning-box"><strong>Warning:</strong> Data will be lost permanently.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker stop $(docker ps -aq)">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker stop $(docker ps -aq)</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Command substitution: stops ALL containers.</span></div>
+        <div class="use-case"><strong>Use case:</strong> "Stop everything now" before shutdown, or a fresh start.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker rm $(docker ps -aq)">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker rm $(docker ps -aq)</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Removes all stopped containers.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Full cleanup after stopping everything.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker rmi $(docker images -q)">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker rmi $(docker images -q)</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Removes all images.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Wiping all images for a clean slate.</div>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ============ TROUBLESHOOTING ============ -->
+  <section id="troubleshooting">
+    <div class="section-header"><div class="section-icon">🔧</div><h2>Troubleshooting</h2><span class="count">12 scenarios</span></div>
+
+    <h3>1. Container Won't Start</h3>
+    <div class="cmd-block" data-cmd="docker logs container_name">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker logs container_name</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Reads stdout/stderr captured by Docker.</span></div>
+        <div class="use-case"><strong>Use case:</strong> The #1 place to find the crash reason. Always first.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker inspect container_name | grep -i error">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker inspect container_name | grep -i error</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Searches the JSON for error fields.</span></div>
+        <div class="use-case"><strong>Use case:</strong> When logs are empty (process never started).</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker events">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker events</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Live stream of daemon events (start, die, kill, oom).</span></div>
+        <div class="use-case"><strong>Use case:</strong> Watch in one terminal while reproducing the bug in another — see exact timing.</div>
+      </div></div>
+    </div>
+
+    <h3>2. Port Already in Use</h3>
+    <div class="cmd-block" data-cmd="docker ps --format '{{.Names}} {{.Ports}}'">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker ps --format '{{.Names}} {{.Ports}}'</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Custom format — just names and ports.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Find which container holds port 8080.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="lsof -i :8080">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">lsof -i :8080</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Host-level tool — shows the process owning a port.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Something outside Docker (like host nginx) holds the port.</div>
+      </div></div>
+    </div>
+
+    <h3>3. Out of Disk Space</h3>
+    <div class="cmd-block" data-cmd="docker system df -v">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker system df -v</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Verbose, per-item breakdown.</span></div>
+        <div class="use-case"><strong>Use case:</strong> The definitive space audit. Find the 15 GB image.</div>
+      </div></div>
+    </div>
+
+    <h3>4. Container Exits Immediately</h3>
+    <div class="cmd-block" data-cmd="docker inspect container_name --format '{{.State.ExitCode}}'">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker inspect container_name --format '{{.State.ExitCode}}'</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Extracts just the exit code.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Decode the failure — 0=clean, 1=app error, 137=SIGKILL (OOM), 139=segfault, 143=SIGTERM.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker run -it --entrypoint sh image_name">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker run -it --entrypoint sh image_name</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Overrides the ENTRYPOINT to get a shell.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Bypass a broken entrypoint to explore what's wrong inside the image.</div>
+      </div></div>
+    </div>
+
+    <h3>5. Network Issues</h3>
+    <div class="cmd-block" data-cmd="docker exec -it container_name ping google.com">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker exec -it container_name ping google.com</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Tests connectivity from inside the container.</span></div>
+        <div class="use-case"><strong>Use case:</strong> The only place that matters for DNS/network debugging — from inside.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="docker exec -it container_name nslookup other_container">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker exec -it container_name nslookup other_container</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Tests Docker's internal DNS resolution.</span></div>
+        <div class="use-case"><strong>Use case:</strong> "Why can't A reach B?" — verify name resolution.</div>
+      </div></div>
+    </div>
+
+    <h3>6. Permission Denied (Linux)</h3>
+    <div class="cmd-block" data-cmd="sudo usermod -aG docker $USER">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">sudo usermod -aG docker $USER</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Adds your user to the docker group.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Run Docker without <code>sudo</code>. Standard first-day fix.</div>
+        <div class="info-box"><strong>Then run:</strong> <code>newgrp docker</code> — refreshes group membership in the current shell.</div>
+      </div></div>
+    </div>
+
+    <h3>7. Image Build Failures</h3>
+    <div class="cmd-block" data-cmd="docker build --progress=plain -t myapp .">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker build --progress=plain -t myapp .</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Shows raw, non-collapsed build output.</span></div>
+        <div class="use-case"><strong>Use case:</strong> See exactly which <code>RUN</code> failed and its full error message.</div>
+      </div></div>
+    </div>
+
+    <h3>8. Performance / Resource Issues</h3>
+    <div class="cmd-block" data-cmd="docker update --memory 512m --cpus 1.0 container_name">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker update --memory 512m --cpus 1.0 container_name</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Live-adjust limits on a running container.</span></div>
+        <div class="use-case"><strong>Use case:</strong> No restart needed — apply new limits on the fly.</div>
+      </div></div>
+    </div>
+
+    <h3>9. Docker Daemon Issues</h3>
+    <div class="cmd-block" data-cmd="sudo systemctl restart docker">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">sudo systemctl restart docker</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Standard systemd restart.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Fix a hung daemon.</div>
+      </div></div>
+    </div>
+
+    <div class="cmd-block" data-cmd="sudo journalctl -u docker.service -n 100">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">sudo journalctl -u docker.service -n 100</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Last 100 daemon log lines.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Where startup failures are explained.</div>
+      </div></div>
+    </div>
+
+    <h3>10. Container Health Check</h3>
+    <div class="cmd-block" data-cmd="docker inspect --format='{{.State.Health.Status}}' container_name">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker inspect --format='{{.State.Health.Status}}' container_name</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Returns <code>healthy</code>, <code>unhealthy</code>, or <code>starting</code>.</span></div>
+        <div class="use-case"><strong>Use case:</strong> Automation-ready health check. Only works if Dockerfile defined <code>HEALTHCHECK</code>.</div>
+      </div></div>
+    </div>
+
+    <h3>11. Dive into Filesystem</h3>
+    <div class="cmd-block" data-cmd="docker diff container_name">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">docker diff container_name</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Shows A (added), C (changed), D (deleted) files vs the image.</span></div>
+        <div class="use-case"><strong>Use case:</strong> See what a container modified — catch runaway logs or unexpected writes.</div>
+      </div></div>
+    </div>
+
+    <h3>12. Kernel / Runtime Diagnostics</h3>
+    <div class="cmd-block" data-cmd="dmesg | grep -i docker">
+      <div class="cmd-header"><div class="cmd-terminal-dots"><span></span><span></span><span></span></div><span class="cmd-text">dmesg | grep -i docker</span><div class="cmd-actions"><button class="icon-btn copy-btn">📋</button><button class="icon-btn expand-btn">▾</button></div></div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row"><span class="detail-label">What it does</span><span class="detail-value">Kernel-level messages related to Docker.</span></div>
+        <div class="use-case"><strong>Use case:</strong> OOM kills, cgroup errors, overlayfs issues.</div>
+      </div></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Docker Practice Guide · Made with 🐳 for learners</p>
+    <p style="margin-top: 8px; font-size: 0.78rem;">Click any command to expand · Click 📋 to copy</p>
+  </footer>
+
+</div>
+
+<div class="toast" id="toast">Copied to clipboard!</div>
+
+<script>
+  // ============ COUNT COMMANDS ============
+  const totalCmds = document.querySelectorAll('.cmd-block').length;
+  document.getElementById('statCmds').textContent = totalCmds + '+';
+
+  // ============ EXPAND/COLLAPSE PER BLOCK ============
+  document.querySelectorAll('.cmd-block').forEach(block => {
+    const header = block.querySelector('.cmd-header');
+    const expandBtn = block.querySelector('.expand-btn');
+    const copyBtn = block.querySelector('.copy-btn');
+
+    // Click header OR expand button toggles
+    const toggle = (e) => {
+      if (e.target.classList.contains('copy-btn')) return; // copy handled separately
+      block.classList.toggle('open');
+    };
+    header.addEventListener('click', toggle);
+    expandBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      block.classList.toggle('open');
+    });
+
+    // Copy button
+    copyBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const cmd = block.dataset.cmd || block.querySelector('.cmd-text').textContent.trim();
+      copyToClipboard(cmd, copyBtn);
+    });
+  });
+
+  // ============ COPY CODE BLOCKS (Dockerfile / Compose) ============
+  document.querySelectorAll('.code-block').forEach(block => {
+    const btn = block.querySelector('.copy-btn');
+    if (!btn) return;
+    btn.addEventListener('click', () => {
+      const text = block.querySelector('pre').innerText;
+      copyToClipboard(text, btn);
+    });
+  });
+
+  // ============ COPY FUNCTION ============
+  function copyToClipboard(text, btn) {
+    navigator.clipboard.writeText(text).then(() => {
+      showToast('Copied: ' + (text.length > 40 ? text.slice(0, 40) + '…' : text));
+      if (btn) {
+        btn.classList.add('copied');
+        const original = btn.textContent;
+        btn.textContent = '✓';
+        setTimeout(() => {
+          btn.classList.remove('copied');
+          btn.textContent = original;
+        }, 1200);
+      }
+    }).catch(() => {
+      // Fallback for file:// protocol
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); showToast('Copied!'); } catch(e) { showToast('Copy failed'); }
+      document.body.removeChild(ta);
+    });
+  }
+
+  // ============ TOAST ============
+  let toastTimer;
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg || 'Copied to clipboard!';
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 1800);
+  }
+
+  // ============ TOGGLE ALL ============
+  function toggleAll(open) {
+    document.querySelectorAll('.cmd-block').forEach(b => {
+      if (open) b.classList.add('open');
+      else b.classList.remove('open');
+    });
+  }
+
+  // ============ COPY ALL VISIBLE COMMANDS ============
+  function copyAllVisible() {
+    const cmds = Array.from(document.querySelectorAll('.cmd-block'))
+      .map(b => b.dataset.cmd || b.querySelector('.cmd-text').textContent.trim())
+      .join('\n');
+    copyToClipboard(cmds, null);
+  }
+
+  // ============ NAV SMOOTH SCROLL + ACTIVE ============
+  document.querySelectorAll('nav a').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        document.querySelectorAll('nav a').forEach(x => x.classList.remove('active'));
+        a.classList.add('active');
+      }
+    });
+  });
+
+  // ============ SCROLL PROGRESS BAR ============
+  window.addEventListener('scroll', () => {
+    const h = document.documentElement;
+    const scrolled = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+    document.getElementById('progressBar').style.width = scrolled + '%';
+
+    // Update active nav based on scroll position
+    const sections = document.querySelectorAll('section');
+    const fromTop = window.scrollY + 130;
+    let currentId = '';
+    sections.forEach(s => {
+      if (s.offsetTop <= fromTop) currentId = s.id;
+    });
+    if (currentId) {
+      document.querySelectorAll('nav a').forEach(a => {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + currentId);
+      });
+    }
+  });
+
+  // ============ KEYBOARD: ESC collapses all ============
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') toggleAll(false);
+  });
+</script>
+
+</body>
+</html>
