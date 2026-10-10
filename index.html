@@ -3,595 +3,918 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Docker Practice Guide</title>
+<title>Docker Practice Guide — Premium</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'Segoe UI', Tahoma, sans-serif;
-    background: #0d1117;
-    color: #c9d1d9;
-    line-height: 1.6;
-    padding: 20px;
-  }
-  header {
-    background: linear-gradient(135deg, #2496ed, #0db7ed);
-    padding: 30px;
-    border-radius: 10px;
-    text-align: center;
-    margin-bottom: 30px;
-    color: white;
-  }
-  header h1 { font-size: 2.5rem; margin-bottom: 10px; }
-  header p { font-size: 1.1rem; opacity: 0.95; }
+  /* ---------- RESET & BASE ---------- */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  .container { max-width: 1200px; margin: 0 auto; }
+  :root {
+    --bg-1: #0a0e1a;
+    --bg-2: #0f1629;
+    --bg-3: #141b30;
+    --surface: rgba(255, 255, 255, 0.03);
+    --surface-hover: rgba(255, 255, 255, 0.06);
+    --border: rgba(255, 255, 255, 0.08);
+    --border-hover: rgba(88, 166, 255, 0.4);
+    --text-1: #f0f6fc;
+    --text-2: #b8c1d1;
+    --text-3: #8b949e;
+    --accent-1: #2496ed;
+    --accent-2: #0db7ed;
+    --accent-3: #58a6ff;
+    --green: #3fb950;
+    --yellow: #f0b429;
+    --red: #f85149;
+    --purple: #a371f7;
+    --gradient-1: linear-gradient(135deg, #2496ed 0%, #0db7ed 100%);
+    --gradient-2: linear-gradient(135deg, #a371f7 0%, #2496ed 100%);
+    --gradient-3: linear-gradient(135deg, #3fb950 0%, #0db7ed 100%);
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.5);
+    --glow: 0 0 40px rgba(36, 150, 237, 0.3);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg-1);
+    color: var(--text-1);
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Animated background blobs */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background:
+      radial-gradient(circle at 20% 30%, rgba(36, 150, 237, 0.12) 0%, transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(163, 113, 247, 0.10) 0%, transparent 45%),
+      radial-gradient(circle at 50% 90%, rgba(13, 183, 237, 0.08) 0%, transparent 40%);
+    animation: floatBg 25s ease-in-out infinite;
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  @keyframes floatBg {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(-3%, 3%) scale(1.05); }
+    66% { transform: translate(3%, -2%) scale(0.98); }
+  }
+
+  /* ---------- LAYOUT ---------- */
+  .container {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 24px;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    position: relative;
+    padding: 80px 40px;
+    margin-bottom: 32px;
+    border-radius: 24px;
+    background: linear-gradient(135deg, rgba(36, 150, 237, 0.15) 0%, rgba(163, 113, 247, 0.12) 100%);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    text-align: center;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -2px; left: -2px; right: -2px; bottom: -2px;
+    background: linear-gradient(135deg, #2496ed, #a371f7, #0db7ed, #2496ed);
+    background-size: 300% 300%;
+    border-radius: 24px;
+    z-index: -1;
+    animation: gradientBorder 8s ease infinite;
+    opacity: 0.6;
+  }
+
+  @keyframes gradientBorder {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  .hero-logo {
+    font-size: 4.5rem;
+    margin-bottom: 16px;
+    display: inline-block;
+    animation: float 4s ease-in-out infinite;
+    filter: drop-shadow(0 10px 30px rgba(36, 150, 237, 0.5));
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-12px) rotate(-3deg); }
+  }
+
+  .hero h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, #ffffff 0%, #b8c1d1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero p {
+    font-size: clamp(1rem, 1.8vw, 1.15rem);
+    color: var(--text-2);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .hero-badge {
+    display: inline-block;
+    margin-top: 24px;
+    padding: 8px 20px;
+    border-radius: 100px;
+    background: rgba(36, 150, 237, 0.15);
+    border: 1px solid rgba(36, 150, 237, 0.4);
+    color: var(--accent-3);
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    backdrop-filter: blur(10px);
+  }
+
+  .hero-badge::before {
+    content: '●';
+    color: var(--green);
+    margin-right: 8px;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* ---------- NAVIGATION ---------- */
+  .nav-wrapper {
+    position: sticky;
+    top: 16px;
+    z-index: 100;
+    margin-bottom: 24px;
+  }
 
   nav {
-    background: #161b22;
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 30px;
+    background: rgba(15, 22, 41, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 10px;
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    border: 1px solid #30363d;
-  }
-  nav a {
-    color: #58a6ff;
-    text-decoration: none;
-    padding: 8px 14px;
-    border-radius: 6px;
-    transition: all 0.2s;
-    font-size: 0.9rem;
-  }
-  nav a:hover { background: #21262d; color: #79c0ff; }
-
-  section {
-    background: #161b22;
-    border: 1px solid #30363d;
-    border-radius: 10px;
-    padding: 25px;
-    margin-bottom: 25px;
-  }
-  h2 {
-    color: #58a6ff;
-    border-bottom: 2px solid #30363d;
-    padding-bottom: 10px;
-    margin-bottom: 20px;
-    font-size: 1.6rem;
-  }
-  h3 {
-    color: #79c0ff;
-    margin: 20px 0 10px;
-    font-size: 1.2rem;
-  }
-  p { margin-bottom: 12px; }
-
-  .cmd {
-    background: #0d1117;
-    border-left: 4px solid #2496ed;
-    padding: 12px 16px;
-    border-radius: 6px;
-    font-family: 'Consolas', 'Monaco', monospace;
-    font-size: 0.92rem;
-    color: #7ee787;
-    margin: 8px 0;
+    gap: 6px;
     overflow-x: auto;
+    scrollbar-width: none;
+    box-shadow: var(--shadow-md);
+  }
+
+  nav::-webkit-scrollbar { display: none; }
+
+  nav a {
+    flex-shrink: 0;
+    color: var(--text-2);
+    text-decoration: none;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
     position: relative;
+  }
+
+  nav a:hover {
+    background: var(--surface-hover);
+    color: var(--text-1);
+    transform: translateY(-1px);
+  }
+
+  nav a.active {
+    background: var(--gradient-1);
+    color: white;
+    box-shadow: 0 4px 16px rgba(36, 150, 237, 0.4);
+  }
+
+  /* ---------- CONTROLS ---------- */
+  .controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+
+  .controls button {
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-2);
+    border: 1px solid var(--border);
+    padding: 10px 18px;
+    border-radius: 10px;
     cursor: pointer;
-    transition: background 0.2s;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    backdrop-filter: blur(10px);
   }
-  .cmd:hover { background: #1a1f26; }
-  .cmd::before {
-    content: "$ ";
-    color: #58a6ff;
+
+  .controls button:hover {
+    background: rgba(36, 150, 237, 0.15);
+    color: var(--accent-3);
+    border-color: var(--border-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(36, 150, 237, 0.2);
+  }
+
+  .controls button:active { transform: translateY(0); }
+
+  /* ---------- SECTIONS ---------- */
+  section {
+    margin-bottom: 48px;
+    scroll-margin-top: 100px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    background: var(--gradient-1);
+    box-shadow: 0 8px 24px rgba(36, 150, 237, 0.3);
+    flex-shrink: 0;
+  }
+
+  .section-header h2 {
+    font-size: clamp(1.3rem, 2.5vw, 1.75rem);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--text-1);
+  }
+
+  .section-header .count {
+    margin-left: auto;
+    font-size: 0.78rem;
+    color: var(--text-3);
+    background: var(--surface);
+    padding: 6px 12px;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  h3 {
+    color: var(--accent-3);
+    margin: 24px 0 12px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+
+  /* ---------- COMMAND CARD ---------- */
+  .cmd-block {
+    background: rgba(15, 22, 41, 0.5);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin: 10px 0;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+  }
+
+  .cmd-block::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--gradient-1);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .cmd-block:hover {
+    border-color: var(--border-hover);
+    transform: translateX(2px);
+    box-shadow: 0 8px 32px rgba(36, 150, 237, 0.12);
+  }
+
+  .cmd-block:hover::before { opacity: 1; }
+
+  .cmd-block.open {
+    border-color: var(--border-hover);
+    background: rgba(15, 22, 41, 0.8);
+    box-shadow: 0 8px 32px rgba(36, 150, 237, 0.15);
+  }
+
+  .cmd-block.open::before { opacity: 1; }
+
+  .cmd-header {
+    display: flex;
+    align-items: center;
+    padding: 14px 18px;
+    cursor: pointer;
+    user-select: none;
+    gap: 12px;
+  }
+
+  .cmd-terminal-dots {
+    display: flex;
+    gap: 5px;
+    flex-shrink: 0;
+  }
+
+  .cmd-terminal-dots span {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    transition: transform 0.2s;
+  }
+
+  .cmd-terminal-dots span:nth-child(1) { background: #ff5f56; }
+  .cmd-terminal-dots span:nth-child(2) { background: #ffbd2e; }
+  .cmd-terminal-dots span:nth-child(3) { background: #27c93f; }
+
+  .cmd-header:hover .cmd-terminal-dots span { transform: scale(1.15); }
+
+  .cmd-text {
+    flex: 1;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+    font-size: 0.86rem;
+    color: #7ee787;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-right: 8px;
+    scrollbar-width: thin;
+  }
+
+  .cmd-text::-webkit-scrollbar { height: 4px; }
+  .cmd-text::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  .cmd-text::before {
+    content: '❯ ';
+    color: var(--accent-3);
     font-weight: bold;
-  }
-  .cmd .comment {
-    color: #8b949e;
-    font-style: italic;
+    margin-right: 4px;
   }
 
-  .tip {
-    background: #1c2128;
-    border-left: 4px solid #f0883e;
-    padding: 12px 16px;
-    border-radius: 6px;
-    margin: 12px 0;
-    font-size: 0.9rem;
+  .cmd-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+    align-items: center;
   }
-  .tip strong { color: #f0883e; }
 
-  .warning {
-    background: #2d1a1a;
-    border-left: 4px solid #f85149;
-    padding: 12px 16px;
-    border-radius: 6px;
-    margin: 12px 0;
-    font-size: 0.9rem;
+  .icon-btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+    padding: 0;
+    font-family: inherit;
   }
-  .warning strong { color: #f85149; }
+
+  .icon-btn:hover {
+    background: rgba(36, 150, 237, 0.2);
+    color: var(--accent-3);
+    border-color: var(--border-hover);
+    transform: scale(1.05);
+  }
+
+  .icon-btn.copied {
+    background: rgba(63, 185, 80, 0.2);
+    color: var(--green);
+    border-color: rgba(63, 185, 80, 0.5);
+  }
+
+  .expand-btn {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .cmd-block.open .expand-btn {
+    transform: rotate(180deg);
+    background: var(--gradient-1);
+    color: white;
+    border-color: transparent;
+  }
+
+  /* ---------- DETAILS PANEL ---------- */
+  .cmd-details {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .cmd-block.open .cmd-details {
+    max-height: 1000px;
+  }
+
+  .cmd-details-inner {
+    padding: 0 20px 20px 20px;
+    border-top: 1px solid var(--border);
+    margin-top: 2px;
+    padding-top: 18px;
+    animation: fadeSlideIn 0.4s ease;
+  }
+
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .detail-row {
+    margin-bottom: 14px;
+    font-size: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .detail-row:last-child { margin-bottom: 0; }
+
+  .detail-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--accent-3);
+    font-weight: 600;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .detail-label::before {
+    content: '';
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--accent-3);
+  }
+
+  .detail-value {
+    color: var(--text-2);
+    line-height: 1.65;
+  }
+
+  .detail-value code {
+    background: rgba(36, 150, 237, 0.12);
+    padding: 2px 7px;
+    border-radius: 5px;
+    font-family: 'JetBrains Mono', 'Consolas', monospace;
+    color: #79c0ff;
+    font-size: 0.85em;
+    border: 1px solid rgba(36, 150, 237, 0.2);
+  }
+
+  /* ---------- CALLOUT BOXES ---------- */
+  .use-case, .warning-box, .tip-box, .info-box {
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-top: 10px;
+    font-size: 0.88rem;
+    line-height: 1.55;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    border-left: 3px solid;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .use-case::before, .warning-box::before, .tip-box::before, .info-box::before {
+    font-size: 1.05rem;
+    flex-shrink: 0;
+    line-height: 1.4;
+  }
+
+  .use-case {
+    background: linear-gradient(90deg, rgba(63, 185, 80, 0.10) 0%, rgba(63, 185, 80, 0.02) 100%);
+    border-color: var(--green);
+    color: #b8e6bc;
+  }
+  .use-case::before { content: '💡'; }
+
+  .warning-box {
+    background: linear-gradient(90deg, rgba(248, 81, 73, 0.10) 0%, rgba(248, 81, 73, 0.02) 100%);
+    border-color: var(--red);
+    color: #ffb8b3;
+  }
+  .warning-box::before { content: '⚠️'; }
+
+  .tip-box {
+    background: linear-gradient(90deg, rgba(240, 180, 41, 0.10) 0%, rgba(240, 180, 41, 0.02) 100%);
+    border-color: var(--yellow);
+    color: #f5d491;
+  }
+  .tip-box::before { content: '✨'; }
+
+  .info-box {
+    background: linear-gradient(90deg, rgba(36, 150, 237, 0.10) 0%, rgba(36, 150, 237, 0.02) 100%);
+    border-color: var(--accent-1);
+    color: #a8d1ff;
+  }
+  .info-box::before { content: 'ℹ️'; }
+
+  .use-case strong, .warning-box strong, .tip-box strong, .info-box strong {
+    color: inherit;
+    font-weight: 600;
+  }
+
+  /* ---------- CODE BLOCKS (Dockerfile) ---------- */
+  .code-block {
+    background: #05080f;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0;
+    overflow: hidden;
+    margin: 10px 0;
+  }
+
+  .code-block-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .code-block-title {
+    font-size: 0.78rem;
+    color: var(--text-3);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  .code-block pre {
+    margin: 0;
+    padding: 16px 18px;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', 'Consolas', monospace;
+    font-size: 0.84rem;
+    line-height: 1.65;
+    color: #e6edf3;
+    scrollbar-width: thin;
+  }
+
+  .code-block pre::-webkit-scrollbar { height: 6px; }
+  .code-block pre::-webkit-scrollbar-thumb { background: var(--border); border-radius: 6px; }
+
+  .code-block .kw { color: #ff7b72; font-weight: 600; }
+  .code-block .str { color: #a5d6ff; }
+  .code-block .cmt { color: #8b949e; font-style: italic; }
+  .code-block .fn { color: #d2a8ff; }
+
+  /* ---------- TABLE ---------- */
+  .table-wrap {
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: rgba(15, 22, 41, 0.5);
+    backdrop-filter: blur(10px);
+  }
 
   table {
     width: 100%;
     border-collapse: collapse;
-    margin: 15px 0;
-    font-size: 0.9rem;
-  }
-  th, td {
-    text-align: left;
-    padding: 10px;
-    border-bottom: 1px solid #30363d;
-  }
-  th {
-    background: #21262d;
-    color: #58a6ff;
-  }
-  tr:hover { background: #1c2128; }
-
-  code {
-    background: #21262d;
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-family: 'Consolas', monospace;
-    color: #ffa657;
     font-size: 0.88rem;
   }
 
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 15px;
-    margin: 15px 0;
+  th {
+    background: rgba(36, 150, 237, 0.08);
+    color: var(--accent-3);
+    text-align: left;
+    padding: 14px 16px;
+    font-weight: 600;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
   }
-  .card {
-    background: #0d1117;
-    border: 1px solid #30363d;
-    border-radius: 8px;
-    padding: 15px;
+
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-2);
+    vertical-align: top;
   }
-  .card h4 {
+
+  tr:last-child td { border-bottom: none; }
+
+  tbody tr {
+    transition: background 0.2s;
+  }
+
+  tbody tr:hover { background: rgba(36, 150, 237, 0.05); }
+
+  td code {
+    background: rgba(36, 150, 237, 0.12);
+    padding: 2px 7px;
+    border-radius: 5px;
+    font-family: 'JetBrains Mono', monospace;
     color: #79c0ff;
-    margin-bottom: 10px;
-    font-size: 1rem;
+    font-size: 0.85em;
+    border: 1px solid rgba(36, 150, 237, 0.2);
   }
 
-  footer {
-    text-align: center;
-    padding: 20px;
-    color: #8b949e;
-    font-size: 0.85rem;
+  /* ---------- STAT CARDS ---------- */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+    margin: 20px 0;
   }
 
-  .copy-msg {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: #238636;
-    color: white;
-    padding: 10px 18px;
-    border-radius: 6px;
+  .stat-card {
+    background: rgba(15, 22, 41, 0.5);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--gradient-1);
     opacity: 0;
     transition: opacity 0.3s;
-    pointer-events: none;
-    font-size: 0.9rem;
   }
-  .copy-msg.show { opacity: 1; }
+
+  .stat-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--border-hover);
+    box-shadow: 0 12px 40px rgba(36, 150, 237, 0.15);
+  }
+
+  .stat-card:hover::before { opacity: 1; }
+
+  .stat-icon { font-size: 1.5rem; margin-bottom: 8px; }
+
+  .stat-value {
+    font-size: 1.75rem;
+    font-weight: 800;
+    background: var(--gradient-1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+  }
+
+  .stat-label {
+    font-size: 0.78rem;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 500;
+    margin-top: 4px;
+  }
+
+  /* ---------- TOAST ---------- */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: rgba(15, 22, 41, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(63, 185, 80, 0.4);
+    color: var(--text-1);
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 30px rgba(63, 185, 80, 0.2);
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .toast::before { content: '✓'; color: var(--green); font-weight: bold; font-size: 1rem; }
+
+  /* ---------- FOOTER ---------- */
+  footer {
+    text-align: center;
+    padding: 48px 20px 24px;
+    color: var(--text-3);
+    font-size: 0.85rem;
+    border-top: 1px solid var(--border);
+    margin-top: 40px;
+  }
+
+  footer .heart { color: var(--red); animation: pulse 1.5s infinite; display: inline-block; }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 700px) {
+    .container { padding: 16px; }
+    .hero { padding: 50px 24px; border-radius: 20px; }
+    .hero-logo { font-size: 3rem; }
+    nav { padding: 8px; }
+    nav a { padding: 8px 14px; font-size: 0.82rem; }
+    .section-header { gap: 10px; }
+    .section-icon { width: 40px; height: 40px; font-size: 1.2rem; }
+    .section-header .count { display: none; }
+    .cmd-header { padding: 12px 14px; gap: 8px; }
+    .cmd-terminal-dots { display: none; }
+    .cmd-text { font-size: 0.78rem; }
+    .detail-row { font-size: 0.85rem; }
+  }
+
+  /* ---------- SCROLLBAR ---------- */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: var(--bg-1); }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    border: 2px solid var(--bg-1);
+  }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(36, 150, 237, 0.5); }
+
+  /* ---------- SELECTION ---------- */
+  ::selection { background: rgba(36, 150, 237, 0.4); color: white; }
+
+  /* ---------- PROGRESS BAR (top) ---------- */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: var(--gradient-1);
+    width: 0%;
+    z-index: 10000;
+    transition: width 0.1s;
+    box-shadow: 0 0 12px rgba(36, 150, 237, 0.8);
+  }
 </style>
 </head>
 <body>
+
+<div class="progress-bar" id="progressBar"></div>
+
 <div class="container">
 
-<header>
-  <h1>🐳 Docker Practice Guide</h1>
-  <p>Complete hands-on commands, Dockerfile examples & troubleshooting</p>
-</header>
-
-<nav>
-  <a href="#basic">Basic Commands</a>
-  <a href="#images">Images</a>
-  <a href="#containers">Containers</a>
-  <a href="#volumes">Volumes</a>
-  <a href="#networks">Networks</a>
-  <a href="#compose">Docker Compose</a>
-  <a href="#dockerfile">Dockerfile</a>
-  <a href="#cleanup">Cleanup</a>
-  <a href="#troubleshooting">Troubleshooting</a>
-  <a href="#practice">Practice App</a>
-</nav>
-
-<!-- BASIC COMMANDS -->
-<section id="basic">
-  <h2>📌 Basic Docker Commands</h2>
-  <div class="cmd">docker --version</div>
-  <div class="cmd">docker info</div>
-  <div class="cmd">docker version</div>
-  <div class="cmd">docker help</div>
-  <div class="cmd">docker login</div>
-  <div class="cmd">docker logout</div>
-  <div class="cmd">docker system info</div>
-  <div class="cmd">docker system df</div>
-</section>
-
-<!-- IMAGES -->
-<section id="images">
-  <h2>🖼️ Docker Image Commands</h2>
-
-  <h3>Pull & List Images</h3>
-  <div class="cmd">docker pull nginx</div>
-  <div class="cmd">docker pull nginx:1.25-alpine</div>
-  <div class="cmd">docker images</div>
-  <div class="cmd">docker image ls</div>
-  <div class="cmd">docker image ls -a</div>
-  <div class="cmd">docker image ls --filter "dangling=true"</div>
-
-  <h3>Build Images</h3>
-  <div class="cmd">docker build -t myapp:1.0 .</div>
-  <div class="cmd">docker build -t myapp:1.0 -f Dockerfile.dev .</div>
-  <div class="cmd">docker build --no-cache -t myapp:1.0 .</div>
-  <div class="cmd">docker build --build-arg ENV=prod -t myapp:1.0 .</div>
-
-  <h3>Tag, Push & Remove</h3>
-  <div class="cmd">docker tag myapp:1.0 username/myapp:1.0</div>
-  <div class="cmd">docker push username/myapp:1.0</div>
-  <div class="cmd">docker rmi myapp:1.0</div>
-  <div class="cmd">docker rmi -f myapp:1.0</div>
-  <div class="cmd">docker image prune</div>
-  <div class="cmd">docker image prune -a</div>
-
-  <h3>Inspect & Save</h3>
-  <div class="cmd">docker inspect nginx</div>
-  <div class="cmd">docker history nginx</div>
-  <div class="cmd">docker save -o nginx.tar nginx</div>
-  <div class="cmd">docker load -i nginx.tar</div>
-</section>
-
-<!-- CONTAINERS -->
-<section id="containers">
-  <h2>📦 Container Commands</h2>
-
-  <h3>Run Containers</h3>
-  <div class="cmd">docker run hello-world</div>
-  <div class="cmd">docker run -it ubuntu bash</div>
-  <div class="cmd">docker run -d --name web -p 8080:80 nginx</div>
-  <div class="cmd">docker run -d --name db -e MYSQL_ROOT_PASSWORD=secret mysql:8</div>
-  <div class="cmd">docker run -d --name app --restart always myapp:1.0</div>
-  <div class="cmd">docker run --rm -it alpine sh</div>
-  <div class="cmd">docker run -d -v $(pwd):/app myapp:1.0</div>
-  <div class="cmd">docker run -d --network mynet --name api myapi:1.0</div>
-
-  <h3>List Containers</h3>
-  <div class="cmd">docker ps</div>
-  <div class="cmd">docker ps -a</div>
-  <div class="cmd">docker ps -q</div>
-  <div class="cmd">docker ps --filter "status=exited"</div>
-
-  <h3>Lifecycle</h3>
-  <div class="cmd">docker start web</div>
-  <div class="cmd">docker stop web</div>
-  <div class="cmd">docker restart web</div>
-  <div class="cmd">docker pause web</div>
-  <div class="cmd">docker unpause web</div>
-  <div class="cmd">docker kill web</div>
-  <div class="cmd">docker rm web</div>
-  <div class="cmd">docker rm -f web</div>
-
-  <h3>Interact & Execute</h3>
-  <div class="cmd">docker exec -it web bash</div>
-  <div class="cmd">docker exec -it web sh</div>
-  <div class="cmd">docker exec web ls /etc/nginx</div>
-  <div class="cmd">docker attach web</div>
-  <div class="cmd">docker logs web</div>
-  <div class="cmd">docker logs -f web</div>
-  <div class="cmd">docker logs --tail 50 web</div>
-  <div class="cmd">docker logs --since 10m web</div>
-
-  <h3>Copy & Inspect</h3>
-  <div class="cmd">docker cp file.txt web:/tmp/</div>
-  <div class="cmd">docker cp web:/etc/nginx/nginx.conf ./</div>
-  <div class="cmd">docker inspect web</div>
-  <div class="cmd">docker inspect -f '{{.State.Status}}' web</div>
-  <div class="cmd">docker stats</div>
-  <div class="cmd">docker stats --no-stream</div>
-  <div class="cmd">docker top web</div>
-  <div class="cmd">docker port web</div>
-  <div class="cmd">docker diff web</div>
-</section>
-
-<!-- VOLUMES -->
-<section id="volumes">
-  <h2>💾 Volume Commands</h2>
-  <div class="cmd">docker volume create mydata</div>
-  <div class="cmd">docker volume ls</div>
-  <div class="cmd">docker volume inspect mydata</div>
-  <div class="cmd">docker volume rm mydata</div>
-  <div class="cmd">docker volume prune</div>
-  <div class="cmd">docker run -d -v mydata:/var/lib/mysql mysql:8</div>
-  <div class="cmd">docker run -d -v $(pwd)/html:/usr/share/nginx/html nginx</div>
-  <div class="cmd">docker run -d --mount source=mydata,target=/data nginx</div>
-</section>
-
-<!-- NETWORKS -->
-<section id="networks">
-  <h2>🌐 Network Commands</h2>
-  <div class="cmd">docker network ls</div>
-  <div class="cmd">docker network create mynet</div>
-  <div class="cmd">docker network create --driver bridge mynet</div>
-  <div class="cmd">docker network inspect mynet</div>
-  <div class="cmd">docker network connect mynet web</div>
-  <div class="cmd">docker network disconnect mynet web</div>
-  <div class="cmd">docker network rm mynet</div>
-  <div class="cmd">docker network prune</div>
-  <div class="cmd">docker run -d --network mynet --name api nginx</div>
-</section>
-
-<!-- DOCKER COMPOSE -->
-<section id="compose">
-  <h2>🎼 Docker Compose Commands</h2>
-  <div class="cmd">docker compose up</div>
-  <div class="cmd">docker compose up -d</div>
-  <div class="cmd">docker compose up --build</div>
-  <div class="cmd">docker compose down</div>
-  <div class="cmd">docker compose down -v</div>
-  <div class="cmd">docker compose ps</div>
-  <div class="cmd">docker compose logs -f</div>
-  <div class="cmd">docker compose logs web</div>
-  <div class="cmd">docker compose exec web bash</div>
-  <div class="cmd">docker compose restart web</div>
-  <div class="cmd">docker compose stop</div>
-  <div class="cmd">docker compose start</div>
-  <div class="cmd">docker compose build</div>
-  <div class="cmd">docker compose pull</div>
-  <div class="cmd">docker compose config</div>
-
-  <h3>Sample docker-compose.yml</h3>
-  <div class="cmd" style="white-space: pre; color: #e6edf3;">version: '3.8'
-services:
-  web:
-    build: .
-    ports:
-      - "8080:80"
-    volumes:
-      - ./html:/usr/share/nginx/html
-    depends_on:
-      - db
-  db:
-    image: mysql:8
-    environment:
-      MYSQL_ROOT_PASSWORD: secret
-    volumes:
-      - dbdata:/var/lib/mysql
-volumes:
-  dbdata:</div>
-</section>
-
-<!-- DOCKERFILE -->
-<section id="dockerfile">
-  <h2>📝 Dockerfile Examples</h2>
-
-  <h3>Node.js App</h3>
-  <div class="cmd" style="white-space: pre; color: #e6edf3;">FROM node:20-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
-EXPOSE 3000
-CMD ["node", "index.js"]</div>
-
-  <h3>Python App</h3>
-  <div class="cmd" style="white-space: pre; color: #e6edf3;">FROM python:3.12-slim
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-COPY . .
-EXPOSE 5000
-CMD ["python", "app.py"]</div>
-
-  <h3>Multi-Stage Build</h3>
-  <div class="cmd" style="white-space: pre; color: #e6edf3;">FROM node:20-alpine AS builder
-WORKDIR /app
-COPY . .
-RUN npm install && npm run build
-
-FROM nginx:alpine
-COPY --from=builder /app/dist /usr/share/nginx/html
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]</div>
-
-  <h3>Key Dockerfile Instructions</h3>
-  <table>
-    <tr><th>Instruction</th><th>Purpose</th></tr>
-    <tr><td><code>FROM</code></td><td>Base image</td></tr>
-    <tr><td><code>WORKDIR</code></td><td>Set working directory</td></tr>
-    <tr><td><code>COPY</code></td><td>Copy files from host</td></tr>
-    <tr><td><code>ADD</code></td><td>Copy + extract URLs/tarballs</td></tr>
-    <tr><td><code>RUN</code></td><td>Execute at build time</td></tr>
-    <tr><td><code>CMD</code></td><td>Default command at runtime</td></tr>
-    <tr><td><code>ENTRYPOINT</code></td><td>Fixed executable</td></tr>
-    <tr><td><code>EXPOSE</code></td><td>Document port</td></tr>
-    <tr><td><code>ENV</code></td><td>Environment variable</td></tr>
-    <tr><td><code>ARG</code></td><td>Build-time variable</td></tr>
-    <tr><td><code>VOLUME</code></td><td>Mount point</td></tr>
-    <tr><td><code>USER</code></td><td>Run as user</td></tr>
-    <tr><td><code>LABEL</code></td><td>Metadata</td></tr>
-    <tr><td><code>HEALTHCHECK</code></td><td>Container health test</td></tr>
-  </table>
-</section>
-
-<!-- CLEANUP -->
-<section id="cleanup">
-  <h2>🧹 Cleanup Commands</h2>
-  <div class="cmd">docker container prune</div>
-  <div class="cmd">docker image prune</div>
-  <div class="cmd">docker image prune -a</div>
-  <div class="cmd">docker volume prune</div>
-  <div class="cmd">docker network prune</div>
-  <div class="cmd">docker system prune</div>
-  <div class="cmd">docker system prune -a</div>
-  <div class="cmd">docker system prune -a --volumes</div>
-  <div class="cmd">docker stop $(docker ps -aq)</div>
-  <div class="cmd">docker rm $(docker ps -aq)</div>
-  <div class="cmd">docker rmi $(docker images -q)</div>
-
-  <div class="warning">
-    <strong>⚠️ Warning:</strong> <code>docker system prune -a --volumes</code> removes ALL unused images, containers, networks, AND volumes. Data will be lost permanently.
+  <!-- ============ HERO ============ -->
+  <div class="hero">
+    <div class="hero-logo">🐳</div>
+    <h1>Docker Practice Guide</h1>
+    <p>The complete interactive reference. Every command explained with real-world use cases — click any command to dive in.</p>
+    <div class="hero-badge">100+ commands · 9 categories · copy-to-clipboard</div>
   </div>
-</section>
 
-<!-- TROUBLESHOOTING -->
-<section id="troubleshooting">
-  <h2>🔧 Troubleshooting Commands</h2>
+  <!-- ============ NAV ============ -->
+  <div class="nav-wrapper">
+    <nav id="mainNav">
+      <a href="#basic" class="active">⚙️ Basic</a>
+      <a href="#images">🖼️ Images</a>
+      <a href="#containers">📦 Containers</a>
+      <a href="#volumes">💾 Volumes</a>
+      <a href="#networks">🌐 Networks</a>
+      <a href="#compose">🎼 Compose</a>
+      <a href="#dockerfile">📝 Dockerfile</a>
+      <a href="#cleanup">🧹 Cleanup</a>
+      <a href="#troubleshooting">🔧 Troubleshoot</a>
+    </nav>
+  </div>
 
-  <h3>1. Container Won't Start</h3>
-  <div class="cmd">docker logs container_name</div>
-  <div class="cmd">docker logs --tail 100 container_name</div>
-  <div class="cmd">docker inspect container_name | grep -i error</div>
-  <div class="cmd">docker events</div>
-  <div class="cmd">docker run -it image_name sh</div>
+  <!-- ============ CONTROLS ============ -->
+  <div class="controls">
+    <button onclick="toggleAll(true)">▼ Expand All</button>
+    <button onclick="toggleAll(false)">▲ Collapse All</button>
+    <button onclick="copyAllVisible()">📋 Copy All Visible</button>
+  </div>
 
-  <h3>2. Port Already in Use</h3>
-  <div class="cmd">docker ps --format '{{.Names}} {{.Ports}}'</div>
-  <div class="cmd">netstat -tulpn | grep 8080</div>
-  <div class="cmd">lsof -i :8080</div>
-  <div class="cmd">docker run -p 8081:80 nginx</div>
-
-  <h3>3. Out of Disk Space</h3>
-  <div class="cmd">docker system df</div>
-  <div class="cmd">docker system df -v</div>
-  <div class="cmd">docker system prune -a</div>
-  <div class="cmd">docker volume prune</div>
-  <div class="cmd">du -sh /var/lib/docker</div>
-
-  <h3>4. Container Exits Immediately</h3>
-  <div class="cmd">docker logs container_name</div>
-  <div class="cmd">docker inspect container_name --format '{{.State.ExitCode}}'</div>
-  <div class="cmd">docker run -it --entrypoint sh image_name</div>
-
-  <h3>5. Network Issues</h3>
-  <div class="cmd">docker network inspect bridge</div>
-  <div class="cmd">docker exec -it container_name ping google.com</div>
-  <div class="cmd">docker exec -it container_name nslookup other_container</div>
-  <div class="cmd">docker exec -it container_name cat /etc/hosts</div>
-  <div class="cmd">docker exec -it container_name ip addr</div>
-
-  <h3>6. Permission Denied</h3>
-  <div class="cmd">sudo usermod -aG docker $USER</div>
-  <div class="cmd">newgrp docker</div>
-  <div class="cmd">sudo chown $USER /var/run/docker.sock</div>
-
-  <h3>7. Image Build Failures</h3>
-  <div class="cmd">docker build --no-cache -t myapp .</div>
-  <div class="cmd">docker build --progress=plain -t myapp .</div>
-  <div class="cmd">docker build -t myapp . 2>&1 | tee build.log</div>
-
-  <h3>8. Performance / Resource Issues</h3>
-  <div class="cmd">docker stats</div>
-  <div class="cmd">docker stats --no-stream</div>
-  <div class="cmd">docker inspect container_name | grep -i memory</div>
-  <div class="cmd">docker update --memory 512m --cpus 1.0 container_name</div>
-
-  <h3>9. Docker Daemon Issues</h3>
-  <div class="cmd">sudo systemctl status docker</div>
-  <div class="cmd">sudo systemctl restart docker</div>
-  <div class="cmd">sudo journalctl -u docker.service -n 100</div>
-  <div class="cmd">sudo dockerd --debug</div>
-
-  <h3>10. Container Health Check</h3>
-  <div class="cmd">docker inspect --format='{{.State.Health.Status}}' container_name</div>
-  <div class="cmd">docker inspect --format='{{json .State.Health}}' container_name | jq</div>
-
-  <h3>11. Dive into Filesystem</h3>
-  <div class="cmd">docker exec -it container_name sh</div>
-  <div class="cmd">docker diff container_name</div>
-  <div class="cmd">docker export container_name > container.tar</div>
-
-  <h3>12. Kernel / Runtime Diagnostics</h3>
-  <div class="cmd">docker info | grep -i "runtime\|kernel\|storage"</div>
-  <div class="cmd">dmesg | grep -i docker</div>
-  <div class="cmd">docker run --privileged -it alpine sh</div>
-</section>
-
-<!-- PRACTICE APP -->
-<section id="practice">
-  <h2>🚀 Practice Application Walkthrough</h2>
-  <p>Follow these steps to build, run, and troubleshoot a full practice app.</p>
-
-  <h3>Step 1: Create Project Files</h3>
-  <div class="grid">
-    <div class="card">
-      <h4>index.html</h4>
-      <div class="cmd" style="white-space: pre; font-size: 0.8rem;">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-&lt;body&gt;
-  &lt;h1&gt;Hello from Docker!&lt;/h1&gt;
-&lt;/body&gt;
-&lt;/html&gt;</div>
+  <!-- ============ STATS ============ -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon">⚡</div>
+      <div class="stat-value" id="statCmds">0</div>
+      <div class="stat-label">Commands</div>
     </div>
-    <div class="card">
-      <h4>Dockerfile</h4>
-      <div class="cmd" style="white-space: pre; font-size: 0.8rem;">FROM nginx:alpine
-COPY index.html /usr/share/nginx/html/
-EXPOSE 80</div>
+    <div class="stat-card">
+      <div class="stat-icon">📁</div>
+      <div class="stat-value">9</div>
+      <div class="stat-label">Categories</div>
     </div>
-    <div class="card">
-      <h4>docker-compose.yml</h4>
-      <div class="cmd" style="white-space: pre; font-size: 0.8rem;">version: '3.8'
-services:
-  web:
-    build: .
-    ports:
-      - "8080:80"</div>
+    <div class="stat-card">
+      <div class="stat-icon">🎯</div>
+      <div class="stat-value">100%</div>
+      <div class="stat-label">Use Cases</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">📋</div>
+      <div class="stat-value">1-click</div>
+      <div class="stat-label">Copy</div>
     </div>
   </div>
 
-  <h3>Step 2: Build & Run</h3>
-  <div class="cmd">docker build -t hello-docker .</div>
-  <div class="cmd">docker run -d -p 8080:80 --name hello hello-docker</div>
-  <div class="cmd">curl http://localhost:8080</div>
+  <!-- ============ BASIC ============ -->
+  <section id="basic">
+    <div class="section-header">
+      <div class="section-icon">⚙️</div>
+      <h2>Basic Commands</h2>
+      <span class="count">8 commands</span>
+    </div>
 
-  <h3>Step 3: Practice Troubleshooting</h3>
-  <div class="cmd">docker logs hello</div>
-  <div class="cmd">docker exec -it hello sh</div>
-  <div class="cmd">docker inspect hello</div>
-  <div class="cmd">docker stats hello</div>
+    <div class="cmd-block" data-cmd="docker --version">
+      <div class="cmd-header">
+        <div class="cmd-terminal-dots"><span></span><span></span><span></span></div>
+        <span class="cmd-text">docker --version</span>
+        <div class="cmd-actions">
+          <button class="icon-btn copy-btn" title="Copy">📋</button>
+          <button class="icon-btn expand-btn" title="Expand">▾</button>
+        </div>
+      </div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row">
+          <span class="detail-label">What it does</span>
+          <span class="detail-value">Prints the installed Docker CLI version.</span>
+        </div>
+        <div class="use-case"><strong>Use case:</strong> Before deploying or during interviews — confirm Docker is installed and which version you're on. Docker 1.13 = ancient (2017).</div>
+      </div></div>
+    </div>
 
-  <h3>Step 4: Clean Up</h3>
-  <div class="cmd">docker stop hello && docker rm hello</div>
-  <div class="cmd">docker rmi hello-docker</div>
+    <div class="cmd-block" data-cmd="docker info">
+      <div class="cmd-header">
+        <div class="cmd-terminal-dots"><span></span><span></span><span></span></div>
+        <span class="cmd-text">docker info</span>
+        <div class="cmd-actions">
+          <button class="icon-btn copy-btn" title="Copy">📋</button>
+          <button class="icon-btn expand-btn" title="Expand">▾</button>
+        </div>
+      </div>
+      <div class="cmd-details"><div class="cmd-details-inner">
+        <div class="detail-row">
+          <span class="detail-label">What it does</span>
+          <span class="detail-value">Shows daemon-wide details: storage driver, kernel, runtime, container/image counts, memory.</span>
+        </div>
+        <div class="use-case"><strong>Use case:</strong> First command on any unfamiliar server. Reveals why containers misbehave — wrong storage driver, cgroup version, or resource limits.</div>
+      </div></div>
+    </div>
 
-  <div class="tip">
-    <strong>💡 Pro Tip:</strong> Click any command block to copy it to your clipboard instantly!
-  </div>
-</section>
-
-<footer>
-  Docker Practice Guide &copy; 2025 | Made with 🐳 for learners
-</footer>
-
-</div>
-
-<div class="copy-msg" id="copyMsg">✅ Copied to clipboard!</div>
-
-<script>
-  document.querySelectorAll('.cmd').forEach(el => {
-    el.addEventListener('click', () => {
-      const text = el.innerText.replace(/\$ /, '');
-      navigator.clipboard.writeText(text).then(() => {
-        const msg = document.getElementById('copyMsg');
-        msg.classList.add('show');
-        setTimeout(() => msg.classList.remove('show'), 1500);
-      });
-    });
-  });
-
-  document.querySelectorAll('nav a').forEach(a => {
-    a.addEventListener('click', e => {
-      e.preventDefault();
-      document.querySelector(a.getAttribute('href'))
-        .scrollIntoView({ behavior: 'smooth' });
-    });
-  });
-</script>
-
-</body>
-</html>
+    <div class="cmd-block" data-cmd="docker version">
+      <div class="cmd-header">
+        <div class="cmd-terminal-dots"><span></span><span></span><span></span></div>
+        <span class="cmd-text">docker version</span>
+        <div class="cmd-actions">
+          <button class="icon-btn copy-btn" title="Copy">📋
